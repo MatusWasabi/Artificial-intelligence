@@ -78,11 +78,10 @@ def bfs():
 
     queue.append(start)
 
-    search_try = 0
 
     while True:
         print(f"Stack {queue}")
-        state = queue.pop(-1)
+        state = queue.pop(0)
 
         right = (state[0], state[1] + 1)
         up = (state[0] - 1, state[1])
