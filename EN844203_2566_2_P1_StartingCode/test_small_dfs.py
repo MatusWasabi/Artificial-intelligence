@@ -32,3 +32,5 @@ if correct:
     print("Correct Order!!!")
 else:
     print("Incorrect Order :(")
+
+print(myglobal.explore_calls)

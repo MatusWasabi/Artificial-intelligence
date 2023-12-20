@@ -5,8 +5,9 @@
 #
 #####
 
-from explore import explore  ##### DO NOT CHANGE THIS LINE #####
+from explore import explore  ##### DO NOT CHANGE THIS LINE #####    
 
+from queue import PriorityQueue
 
 def initialize_dfs(m, n, sr, sc, gr, gc):
     global row_size
@@ -15,49 +16,49 @@ def initialize_dfs(m, n, sr, sc, gr, gc):
     global start_col
 
     row_size, col_size, start_row, start_col = m, n, sr, sc
+    
+
 
     pass  # TODO
 
 
 def dfs():
+    
+    stack = []
+    start = (start_row, start_col)
+    visited = [start]
 
-    start_location = (start_row, start_col)
-    visited_order = []
-    stack = [start_location]
-    search_values = [""]
+    stack.append(start)
+
     search_try = 0
-    right_value = ""
-    down_value = ""
 
-    while "G" not in search_values:
+    while True:
+        print(f"Stack {stack}")
+        state = stack.pop()
 
-        current_location = stack.pop()
-        #Check right can go
-        if current_location[1] < col_size - 2:
-            right = (current_location[0], current_location[1] + 1)
-            right_value = explore(right[0], right[1])
-            visited_order.append(right)
-
-        #Check down can go
-        if current_location[0] < row_size - 2:
-            down = (current_location[0] + 1, current_location[1])
-            down_value = explore(down[0], down[1])
-            visited_order.append(down)
-
-        #Check if what we have now won't be dup with value of visited grid
-        if(current_location != down and down_value != "X"):
-            search_values.append(down_value)
-            stack.append(down)
+        right = (state[0], state[1] + 1)
+        up = (state[0] - 1, state[1])
+        left = (state[0], state[1] - 1)
+        down = (state[0] + 1, state[1])
+       
+        directions = [right, up, left, down]
+        stack_queue = []
         
-        if(current_location != right and right_value != "X"):
-            search_values.append(right_value)
-            stack.append(right)
+        for direction in directions:
+            if(1 <= direction[0] < (row_size - 1) and 1 <= direction[1] < (col_size - 1)) and direction not in visited:
+                direction_val = explore(direction[0], direction[1])
+                visited.append(direction)
+                if direction_val == "G":
+                    return
+                elif direction_val != "X":
+                    stack_queue.append(direction)
 
+        stack_queue.reverse()
+        stack.extend(stack_queue)
         search_try += 1
-            
-    print(visited_order)
 
-    pass  # TODO
+    pass
+
 
 
 def initialize_bfs(m, n, sr, sc, gr, gc):
@@ -71,50 +72,37 @@ def initialize_bfs(m, n, sr, sc, gr, gc):
 
 def bfs():
 
-    start_location = (start_row, start_col)
-    visited_order = []
-    queue = [start_location]
-    search_values = [""]
+    queue = []
+    start = (start_row, start_col)
+    visited = [start]
+
+    queue.append(start)
+
     search_try = 0
-    right_value = ""
-    down_value = ""
 
-    # May need refactoring
+    while True:
+        print(f"Stack {queue}")
+        state = queue.pop(-1)
 
-    while "G" not in search_values:
-        current_location = queue.pop(0)
-
-        print(f"Pop out {current_location}", end=" ")
+        right = (state[0], state[1] + 1)
+        up = (state[0] - 1, state[1])
+        left = (state[0], state[1] - 1)
+        down = (state[0] + 1, state[1])
+       
+        directions = [right, up, left, down]
+        queue_queue = []
         
-        #Check if right can go
-        if (current_location[1] < col_size - 2) and (current_location[0], current_location[1] + 1) not in visited_order:
-            right = (current_location[0], current_location[1] + 1)
-            right_value = explore(right[0], right[1])
-            visited_order.append(right)
-            
+        for direction in directions:
+            if(1 <= direction[0] < (row_size - 1) and 1 <= direction[1] < (col_size - 1)) and direction not in visited:
+                direction_val = explore(direction[0], direction[1])
+                visited.append(direction)
+                if direction_val == "G":
+                    return
+                elif direction_val != "X":
+                    queue.append(direction)
 
 
-        #Check down can go
-        if (current_location[0] < row_size - 2) and (current_location[0] + 1, current_location[1]) not in visited_order:
-            down = (current_location[0] + 1, current_location[1])
-            down_value = explore(down[0], down[1])
-            visited_order.append(down)
 
-        #Check if what we have now won't be dup with value of visited grid
-        if(current_location != right and right not in queue and right_value != "X"):
-            search_values.append(right_value)
-            queue.append(right)
-
-        if(current_location != down and down not in queue and down_value != "X"):
-            search_values.append(down_value)
-            queue.append(down)
-
-
-        print(f"This is queue after search {queue}")
-        search_try += 1
-
-    print(visited_order)
-    pass  # TODO
 
 
 
@@ -133,15 +121,33 @@ def initialize_Astar(m, n, sr, sc, gr, gc, k):
 
 
 def Astar():
+    
+    start = (start_row, start_col)
+    neighbor = dict()
+    cost_to_this = dict()
+    added_neighbor = []
 
-    f_cost = 0
-    search_try = 0
-    current_location = (start_row, start_col)
-    goal_location = (goal_row, goal_col)
+    right = (start[0], start[1] + 1)
+    right_value = explore(right[0], right[1])
+    if right_value.isdigit():
+        added_neighbor.append(right)
+        cost_to_this[right] = int(right_value)
 
-    f_cost += int(explore(1, 2))
+    down = (start[0] + 1, start[1] )
+    down_value = explore(down[0], down[1])
+    if down_value.isdigit():
+        added_neighbor.append(down)
+        cost_to_this[down] = int(down_value)
+
+    
+    neighbor[start] = added_neighbor
 
 
 
-    print(f"This is {f_cost}")
-    return f_cost  # TODO
+    print(f"neighbor {neighbor}")
+    print(f"cost_to_this {cost_to_this}")
+
+
+graph = {(1, 1): [(1, 2), (2, 1)],
+         (1, 2): [()]
+         }

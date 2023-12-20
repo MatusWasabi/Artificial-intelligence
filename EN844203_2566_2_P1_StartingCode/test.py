@@ -1,5 +1,7 @@
-graph = {
-    "(1, 1)" : [[1, 2], [2, 1]]
-}
+x = []
+x.insert(0, 1)
+x.insert(0, 2)
+x.insert(0, 3)
+x.insert(0, 4)
 
-print(graph["(1, 1)"])
+print(x)
