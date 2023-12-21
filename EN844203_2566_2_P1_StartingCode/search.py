@@ -7,7 +7,7 @@
 
 from explore import explore  ##### DO NOT CHANGE THIS LINE #####    
 
-from queue import PriorityQueue
+import math
 
 def initialize_dfs(m, n, sr, sc, gr, gc):
     global row_size
@@ -113,40 +113,65 @@ def initialize_Astar(m, n, sr, sc, gr, gc, k):
     global start_col
     global goal_row
     global goal_col
-    global magical_blade
+    global MAGIC_BLADE
 
-    row_size, col_size, start_row, start_col, goal_row, goal_col, magical_blade = m, n, sr, sc, gr, gc, k
+    row_size, col_size, start_row, start_col, goal_row, goal_col, MAGIC_BLADE = m, n, sr, sc, gr, gc, k
     pass  # TODO
 
 
 def Astar():
+    magical_blade = MAGIC_BLADE
+    priority_queue = []
+    visited = []
+
+    start_grid = ((start_row, start_col), magical_blade, 0, 0)
+    goal = (goal_row, goal_col)
+
+    priority_queue.append(start_grid)
+
+    while True:
+        current = min(priority_queue, key=lambda node: node[2])
+        print(f"Current node {current}")
+        magical_blade = current[1]
+        
+        priority_queue.remove(current)
+
+        if current[0] == (goal_row, goal_col):
+            return current[3]
+        
+        if (current[0], magical_blade) not in visited:
+            visited.append((current[0], magical_blade))
+            
+            directions = [(0, 1), (-1, 0), (0, -1), (1, 0)]
+
+            for direction in directions:
+                checking = tuple(map(sum, zip(direction, current[0])))
+                if(CheckInBound(checking)):
+                    value = explore(checking[0], checking[1])
+
+                    if(value == "X"):
+                        if(magical_blade > 0):
+                            value = "0"
+                            magical_blade -= 1
+
+                    if(value == "S" or value == "G"):
+                        value = "0"
+
+                    if(value.isdigit()):
+                        value = int(value)
+                    
+                    if(value != "X"):
+                        gn = value + current[3]
+                        hn = EuclideanDistance(checking, goal)
+                        fn = gn + hn
+                        priority_queue.append((checking, magical_blade, fn, gn))
+
+
+def CheckInBound(grid: tuple[int, int]):
+    if ((1 <= grid[0] < (row_size - 1)) and (1 <= grid[1] < (col_size - 1))):
+        return True
+    else:
+        return False
     
-    start = (start_row, start_col)
-    neighbor = dict()
-    cost_to_this = dict()
-    added_neighbor = []
-
-    right = (start[0], start[1] + 1)
-    right_value = explore(right[0], right[1])
-    if right_value.isdigit():
-        added_neighbor.append(right)
-        cost_to_this[right] = int(right_value)
-
-    down = (start[0] + 1, start[1] )
-    down_value = explore(down[0], down[1])
-    if down_value.isdigit():
-        added_neighbor.append(down)
-        cost_to_this[down] = int(down_value)
-
-    
-    neighbor[start] = added_neighbor
-
-
-
-    print(f"neighbor {neighbor}")
-    print(f"cost_to_this {cost_to_this}")
-
-
-graph = {(1, 1): [(1, 2), (2, 1)],
-         (1, 2): [()]
-         }
+def EuclideanDistance(start, goal):
+    return ((goal[0] - start[0])**2 + (goal[1] - start[1])**2 ) ** 0.5

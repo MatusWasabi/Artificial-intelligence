@@ -22,3 +22,5 @@ if solution == answer:
     print("You have called the explore() function", len(myglobal.explore_calls), "times")
 else:
     print("Incorrect shortest distance :(")
+
+print(str(answer))
