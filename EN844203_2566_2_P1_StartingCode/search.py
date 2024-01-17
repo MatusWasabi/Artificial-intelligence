@@ -120,20 +120,94 @@ def initialize_Astar(m, n, sr, sc, gr, gc, k):
 
 
 def Astar():
-    magical_blade = MAGIC_BLADE
-    priority_queue = []
-    visited = []
 
-    start_grid = ((start_row, start_col), magical_blade, 0, 0)
+
+    magical_blade = MAGIC_BLADE
+    visited = set() # closed
+    priority_queue = [] #Fringe
+    
+    fn_start = 0
+    gn_start = 0
+    start_node = (start_row, start_col, magical_blade, fn_start, gn_start)
+    goal_location = (goal_row, goal_col)
+
+    priority_queue.append(start_node)
+    visited.add(start_node)
+
+
+
+    while True:#for i in range(30): 
+
+        print(f"Pri Q {priority_queue}")
+
+        # if fringe is empty then return failure
+        if (not priority_queue):
+            return False
+        
+        
+        # node = remove-highest priority (In this case, lowest cost along that path)
+        node = min(priority_queue, key=get_fn)
+        priority_queue.remove(node)
+        node_location = (node[0], node[1])
+        print(f"Selected Node {node}")
+
+        # if goal-test(problem, state[node]) then return node,
+        # state[node] is just location but in this case (location, magic, fn, gn)
+        if(node_location == goal_location):
+            return node[3]
+
+
+        # if state[node] is not in closed then
+        # add state[node] to closed
+        # for child-node in expanded(state[node], problem):
+        # do insert(child node, fringe) 
+
+        if node not in visited:
+            visited.add(node)
+        
+        directions = [(0, 1), (-1, 0), (0, -1), (1, 0)]
+
+        for direction in directions:
+            checking_location = tuple(map(sum, zip(direction, node_location)))
+
+            if(CheckInBound(checking_location)):
+                check_direction_val = explore(checking_location[0], checking_location[1])
+                
+                if(check_direction_val == "X"):
+                    if(magical_blade >= 1):
+                        check_direction_val = "0"
+                        magical_blade -= 1
+                
+                if(check_direction_val == "G"):
+                    check_direction_val = "0"
+
+                if(check_direction_val.isdigit() and (checking_location not in visited)):
+                    check_direction_val = int(check_direction_val)
+                    gn_point = node[4] + check_direction_val
+                    hn_point = EuclideanDistance(checking_location, goal_location)
+                    fn_point = gn_point + hn_point
+                    direction_point = (checking_location[0], checking_location[1], magical_blade, fn_point, gn_point)
+                    priority_queue.append(direction_point)
+
+        print()
+    
+      
+
+
+    #BFS (1, 1) just location
+    #A Star ()
+
+    # Start grid = (location, magic_blade, fn, gn)
+    # 
+
+    """start_grid = ((start_row, start_col), magical_blade, 0, 0)
     goal = (goal_row, goal_col)
 
     priority_queue.append(start_grid)
 
     while True:
         current = min(priority_queue, key=lambda node: node[2])
-        print(f"Current node {current}")
         magical_blade = current[1]
-        
         priority_queue.remove(current)
 
         if current[0] == (goal_row, goal_col):
@@ -146,6 +220,9 @@ def Astar():
 
             for direction in directions:
                 checking = tuple(map(sum, zip(direction, current[0])))
+
+
+                 
                 if(CheckInBound(checking)):
                     value = explore(checking[0], checking[1])
 
@@ -164,8 +241,11 @@ def Astar():
                         gn = value + current[3]
                         hn = EuclideanDistance(checking, goal)
                         fn = gn + hn
-                        priority_queue.append((checking, magical_blade, fn, gn))
+                        priority_queue.append((checking, magical_blade, fn, gn))"""
 
+                    
+def get_fn(position: tuple):
+    return position[3]
 
 def CheckInBound(grid: tuple[int, int]):
     if ((1 <= grid[0] < (row_size - 1)) and (1 <= grid[1] < (col_size - 1))):
