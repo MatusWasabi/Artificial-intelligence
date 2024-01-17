@@ -33,4 +33,3 @@ while True:
     count_list[oppo_move] +=1
 
 
-
