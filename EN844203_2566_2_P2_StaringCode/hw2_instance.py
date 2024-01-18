@@ -1,4 +1,5 @@
 import random
+from board import Board
 
 print("ready")
 
@@ -16,20 +17,24 @@ first_player = int(first_player)
 time_limit = float(time_limit)
 count_list = [0] * num_col
 
+debug_board = Board(num_rows, num_col)
+
 
 if first_player == 0:
     oppo_move = int(input(""))
+    debug_board.DropPiece(oppo_move, "X")
     count_list[oppo_move] +=1
 
 while True:
     while True:
         my_move = random.randint(0,num_col-1)
-        my_move = random.randint(0,num_col-1)
         if count_list[my_move] != num_rows:
             count_list[my_move] += 1
             print(my_move)
+            debug_board.DropPiece(my_move, "O")
             break
     oppo_move = int(input(""))
+    debug_board.DropPiece(oppo_move, "X")
     count_list[oppo_move] +=1
 
 
