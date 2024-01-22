@@ -26,7 +26,8 @@ class Board():
         
                 #self.CheckVertical(piece_drop, col_num)
                 #self.CheckHorizontal(piece_drop, row)
-                self.CheckDiagonalLeft(piece_drop, row, col_num)
+                #self.CheckDiagonalLeft(piece_drop, row, col_num)
+                self.CheckDiagonalRight(piece_drop, row, col_num)
                 return self.DrawBoard()      
             
         # Check Connect
@@ -91,9 +92,31 @@ class Board():
             except IndexError:
                 break
 
-        
-
         print(f"Diagonal left piece check {piece_check} get {number_of_piece_check}")
+            
+        return number_of_piece_check
+    
+    def CheckDiagonalRight(self, piece_check: str, row_num, col_num) -> int:
+        number_of_piece_check = 0 
+        #Checking it from top to down left
+
+        for index in range(len(self.board_space)):
+            try:
+                if self.board_space[row_num + index][col_num + index] == piece_check:
+                    number_of_piece_check += 1
+
+                elif self.board_space[row_num + index][col_num + index] == None:
+                    pass
+
+                else:
+                    print(f"Found {self.board_space[row_num + index][col_num + index]} instad of {piece_check}")
+                    print("Stop checking")
+                    break
+
+            except IndexError:
+                break
+
+        print(f"Diagonal right piece check {piece_check} get {number_of_piece_check}")
             
         return number_of_piece_check
             
@@ -111,4 +134,5 @@ if __name__ == "__main__":
     #Pass
     #import diagonal_left_test_drop
 
-    
+    #TODO
+    import diagonal_right_test_drop
