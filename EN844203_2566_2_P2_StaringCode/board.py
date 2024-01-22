@@ -7,11 +7,15 @@ class Board():
     def DrawBoard(self) -> None:
         for row in self.board_space:
             print(row)
-
         print()
 
-    def DropPiece(self, col_num: int, piece_drop: str):
+    def EditBoard(self, new_board: list[list]) -> None:
+        self.board_space = new_board
+        print("This is new board")
+        self.DrawBoard()
 
+
+    def DropPiece(self, col_num: int, piece_drop: str):
         print(f"Drop {piece_drop} at col {col_num}")
         # Loop from last row to first
         for row in range(len(self.board_space) - 1, -1, -1):
@@ -21,7 +25,8 @@ class Board():
                 self.board_space[row][col_num] = piece_drop
         
                 #self.CheckVertical(piece_drop, col_num)
-                self.CheckHorizontal(piece_drop, row)
+                #self.CheckHorizontal(piece_drop, row)
+                self.CheckDiagonalLeft(piece_drop, row, col_num)
                 return self.DrawBoard()      
             
         # Check Connect
@@ -65,32 +70,45 @@ class Board():
         print(f"Horizontal piece check {piece_check} get {number_of_piece_check}")
             
         return number_of_piece_check
-        pass
 
-    def CheckDiagonal() -> bool:
-        pass
+    def CheckDiagonalLeft(self, piece_check: str, row_num, col_num) -> int:
+        number_of_piece_check = 0 
+        #Checking it from top to down left
+
+        for index in range(len(self.board_space)):
+            try:
+                if self.board_space[row_num + index][col_num - index] == piece_check:
+                    number_of_piece_check += 1
+
+                elif self.board_space[row_num + index][col_num - index] == None:
+                    pass
+
+                else:
+                    print(f"Found {self.board_space[row_num + index][col_num - index]} instad of {piece_check}")
+                    print("Stop checking")
+                    break
+
+            except IndexError:
+                break
+
+        
+
+        print(f"Diagonal left piece check {piece_check} get {number_of_piece_check}")
+            
+        return number_of_piece_check
             
 
     
 
 if __name__ == "__main__":
-    board = Board(6, 7)
-    board.DrawBoard()
 
+    # Pass
+    #import vertical_test_drop
 
-"""    # Vertical Test Passed
-    for i in range(3):
-        board.DropPiece(0 ,"X")
+    #Pass
+    #import horizontal_test_drop
 
-    board.DropPiece(0, "O")
+    #Pass
+    #import diagonal_left_test_drop
 
-    board.DropPiece(0, "X")"""
-
-# Horizontal Test 1 PAssed
-number_of_piece_check = 3
-for i in range(number_of_piece_check):
-    board.DropPiece(i, "X")
-
-#Horizontal Test 2 Passed
-board.DropPiece(number_of_piece_check , "O")
-board.DropPiece(number_of_piece_check + 1, "X")
+    
