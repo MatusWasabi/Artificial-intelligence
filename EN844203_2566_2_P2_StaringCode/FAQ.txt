@@ -1,0 +1,6 @@
+FAQ Page
+Q1. Unable to find Python when Run
+A1. search for "ProgramA" and "ProgramB" command and maybe change it to "python3" instead of "python"
+
+Q2. Unable to run on window 
+A2. Use judge.py at commit 2ac7af0 of this repo
