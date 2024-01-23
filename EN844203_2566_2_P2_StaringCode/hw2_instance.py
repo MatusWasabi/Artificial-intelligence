@@ -4,10 +4,10 @@ from board import Board
 print("ready")
 
 # Debug input
-num_rows = 4
+num_rows = 6
 num_col = 7
-first_player = 1
 num_win_piece = 4
+first_player = 1
 time_limit = 0.2
 
 #num_rows,num_col,first_player,num_win_piece,time_limit = input("").strip().split(" ")

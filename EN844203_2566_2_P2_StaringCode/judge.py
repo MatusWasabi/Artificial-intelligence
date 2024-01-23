@@ -12,14 +12,20 @@ def send_time_receive(myprocess, mymessage, timeout):
 
     timeout += 0.0003
     start_time = time.time()
-    # Wait for input from the program with time limit T
-    while True:
-        rlist, _, _ = select.select([myprocess.stdout], [], [], timeout)
-        if rlist:
-            myoutput = myprocess.stdout.readline().strip()
-            return 0, myoutput  # receive input successfully
-        elif time.time() - start_time > timeout:
-            return 1, ""  # Timed out
+
+    # Read from the subprocess's stdout without using select
+    myoutput = None
+    while time.time() - start_time < timeout:
+        line = myprocess.stdout.readline().strip()
+        if line:
+            myoutput = line
+            break
+
+    if myoutput is not None:
+        return 0, myoutput  # Received input successfully
+    else:
+        return 1, ""  # Timed out
+
 
 
 # check if the game has a winner
@@ -84,14 +90,14 @@ def main():
     winner = 2
 
     # Start Program A
-    processA = subprocess.Popen(processAcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    processA = subprocess.Popen(processAcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
     status, message = send_time_receive(processA, None, 2.1)
     print("A: ", message if status == 0 else "Timed Out")
     if status == 1:
         winner = F
 
     # Start Program B
-    processB = subprocess.Popen(programBcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    processB = subprocess.Popen(programBcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
     status, message = send_time_receive(processB, None, 2.1)
     print("B: ", message if status == 0 else "Timed Out")
     if status == 1:
@@ -147,11 +153,11 @@ def main():
 
     processA.terminate()
     processB.terminate()
+
     if winner == 2:
         print("Result: Draw")
     else:
         print("Result: Winner is Player " + ("X" if winner == 0 else "O"))
-
 
 if __name__ == "__main__":
     main()
