@@ -90,14 +90,14 @@ def main():
     winner = 2
 
     # Start Program A
-    processA = subprocess.Popen(processAcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    processA = subprocess.Popen(processAcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NO_WINDOW)
     status, message = send_time_receive(processA, None, 2.1)
     print("A: ", message if status == 0 else "Timed Out")
     if status == 1:
         winner = F
 
     # Start Program B
-    processB = subprocess.Popen(programBcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    processB = subprocess.Popen(programBcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, creationflags=subprocess.CREATE_NO_WINDOW)
     status, message = send_time_receive(processB, None, 2.1)
     print("B: ", message if status == 0 else "Timed Out")
     if status == 1:
