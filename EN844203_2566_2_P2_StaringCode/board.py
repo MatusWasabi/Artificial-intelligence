@@ -24,10 +24,11 @@ class Board():
             if(self.board_space[row][col_num]) == None:
                 self.board_space[row][col_num] = piece_drop
         
-                #self.CheckVertical(piece_drop, col_num)
-                #self.CheckHorizontal(piece_drop, row)
-                #self.CheckDiagonalLeft(piece_drop, row, col_num)
+                self.CheckVertical(piece_drop, col_num)
+                self.CheckHorizontal(piece_drop, row)
+                self.CheckDiagonalLeft(piece_drop, row, col_num)
                 self.CheckDiagonalRight(piece_drop, row, col_num)
+
                 return self.DrawBoard()      
             
         # Check Connect
@@ -44,8 +45,6 @@ class Board():
                 pass
 
             else:
-                print(f"Found {row[col_num]} instead of {piece_check}")
-                print("Stop checking")
                 break
             
 
@@ -64,8 +63,6 @@ class Board():
                 pass
 
             else:
-                print(f"Found {item} instad of {piece_check}")
-                print("Stop checking")
                 break
 
         print(f"Horizontal piece check {piece_check} get {number_of_piece_check}")
@@ -85,8 +82,6 @@ class Board():
                     pass
 
                 else:
-                    print(f"Found {self.board_space[row_num + index][col_num - index]} instad of {piece_check}")
-                    print("Stop checking")
                     break
 
             except IndexError:
@@ -109,8 +104,6 @@ class Board():
                     pass
 
                 else:
-                    print(f"Found {self.board_space[row_num + index][col_num + index]} instad of {piece_check}")
-                    print("Stop checking")
                     break
 
             except IndexError:
@@ -128,11 +121,15 @@ if __name__ == "__main__":
     # Pass
     #import vertical_test_drop
 
-    #Pass
+    #TODO
+    #Right now, it is checking just from right and when there is what we are not searching for
+    #The number always is 0. Which we do not want that 
     #import horizontal_test_drop
 
     #Pass
     #import diagonal_left_test_drop
 
-    #TODO
-    import diagonal_right_test_drop
+    #Pass
+    #import diagonal_right_test_drop
+
+    pass
