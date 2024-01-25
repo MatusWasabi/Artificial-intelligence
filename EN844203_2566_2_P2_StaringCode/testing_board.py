@@ -1,4 +1,7 @@
-some_list = ["a", "b", "c"]
+def ReturnNone():
+    return None
+count_list = [0] * 5
 
-print(reversed(some_list))
-print(some_list)
+print(count_list)
+
+

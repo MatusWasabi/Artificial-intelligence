@@ -1,7 +1,5 @@
 import time
 import random
-from board import Board
-
 time.sleep(2)
 print("ready")
 
@@ -12,7 +10,6 @@ F = int(F)
 T = float(T)
 count_list = [0] * M
 
-debug_board = Board(N, M)
 
 if F == 0:
     oppo_move = int(input(""))
@@ -26,8 +23,6 @@ while True:
         if count_list[my_move] != N:
             count_list[my_move] += 1
             print(my_move)
-            #debug_board.DropPiece(my_move, "O")
             break
     oppo_move = int(input(""))
-    #debug_board.DropPiece(oppo_move, "X")
     count_list[oppo_move] +=1

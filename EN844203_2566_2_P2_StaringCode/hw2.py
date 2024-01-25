@@ -7,7 +7,7 @@ N = int(N)
 M = int(M)
 F = int(F)
 T = float(T)
-count_list = [0] * M
+count_list = [0] * M 
 
 if F == 0:
     oppo_move = int(input(""))

@@ -27,3 +27,5 @@ while True:
         my_move -=1
     oppo_move = int(input(""))
     count_list[oppo_move] +=1
+
+    print(f"Count list is {count_list}")
