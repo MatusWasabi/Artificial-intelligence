@@ -1,5 +1,5 @@
 # for representing the board as a matrix and doing operations on it
-#import numpy as np
+import numpy as np
 # for gui
 #import pygame
 # for exiting the gui
@@ -38,8 +38,8 @@ YELLOW = (255, 255, 0)
 # -------------------------------
 
 # using numpy, create an empty matrix of 6 rows and 7 columns
-def create_board():
-    board = np.zeros((ROWS, COLS))
+def create_board(row = 6, col = 7):
+    board = np.zeros((row, col))
     return board
 
 
@@ -140,7 +140,7 @@ def score_position(board, piece):
     score = 0
 
     # score center column --> we are prioritizing the central column because it provides more potential winning windows
-    center_array = [int(i) for i in list(board[:,COLS//2])]
+    center_array = [int(i) for i in list(board[COLS//2])]
     center_count = center_array.count(piece)
     score += center_count * 6
 

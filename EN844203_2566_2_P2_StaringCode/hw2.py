@@ -1,5 +1,6 @@
 import random
 
+
 print("ready")
 
 N,M,F,X,T = input("").strip().split(" ")
@@ -22,3 +23,9 @@ while True:
             break
     oppo_move = int(input(""))
     count_list[oppo_move] +=1
+
+
+
+#TODO Create board within this code -> Having the representative state
+#TODO When there is input coming in, Change the available row to the column -> To correctly change the board
+#
