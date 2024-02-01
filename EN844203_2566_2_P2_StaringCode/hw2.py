@@ -26,6 +26,3 @@ while True:
 
 
 
-#TODO Create board within this code -> Having the representative state
-#TODO When there is input coming in, Change the available row to the column -> To correctly change the board
-#

@@ -1,7 +1,7 @@
 # for representing the board as a matrix and doing operations on it
 import numpy as np
 # for gui
-#import pygame
+import pygame
 # for exiting the gui
 import sys
 # for calulations, for exampel with infinity
