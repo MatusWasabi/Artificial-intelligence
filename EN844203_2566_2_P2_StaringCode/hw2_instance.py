@@ -13,8 +13,8 @@ count_list = [0] * M
 board = np.zeros((N, M))
 
 if F == 0:
-    #int(input(""))
-    oppo_move = 0 
+    oppo_move = int(input(""))
+
     board[N - 1 - count_list[oppo_move]][oppo_move] = 1
     count_list[oppo_move] +=1
 	
