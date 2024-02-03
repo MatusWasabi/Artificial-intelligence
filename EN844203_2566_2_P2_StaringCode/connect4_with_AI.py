@@ -1,7 +1,7 @@
 # for representing the board as a matrix and doing operations on it
 import numpy as np
 # for gui
-import pygame
+#import pygame
 # for exiting the gui
 import sys
 # for calulations, for exampel with infinity
@@ -344,8 +344,8 @@ if __name__ == "__main__":
                     col = int(math.floor(xpos/SQUARESIZE)) 
 
                     if is_valid_location(board, col):
-                        row = get_next_open_row(board, col)
-                        drop_piece(board, row, col, PLAYER_PIECE)
+                        N = get_next_open_row(board, col)
+                        drop_piece(board, N, col, PLAYER_PIECE)
                         if winning_move(board, PLAYER_PIECE):
                             print("PLAYER 1 WINS!")
                             label = my_font.render("PLAYER 1 WINS!", 1, RED)
@@ -373,8 +373,8 @@ if __name__ == "__main__":
 
             if is_valid_location(board, col):
                 pygame.time.wait(500)
-                row = get_next_open_row(board, col)
-                drop_piece(board, row, col, AI_PIECE)
+                N = get_next_open_row(board, col)
+                drop_piece(board, N, col, AI_PIECE)
                 if winning_move(board, AI_PIECE):
                     print("PLAYER 2 WINS!")
                     label = my_font.render("PLAYER 2 WINS!", 1, YELLOW)

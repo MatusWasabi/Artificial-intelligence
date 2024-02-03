@@ -1,0 +1,1 @@
+python judge.py hw2_instance.py random.py 6 7 4 1 2
