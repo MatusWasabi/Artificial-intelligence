@@ -4,9 +4,10 @@ import math
 
 print("ready")
 
-ROWS,COLS,F,X,T = input("").strip().split(" ")
+ROWS,COLS,F,WIN_NUM,T = input("").strip().split(" ")
 ROWS = int(ROWS)
 COLS = int(COLS)
+WIN_NUM = int(WIN_NUM)
 F = int(F)
 T = float(T)
 count_list = [0] * COLS 
@@ -93,29 +94,44 @@ def get_valid_locations(board):
 def is_terminal_node(board):
     return winning_move(board, PLAYER_PIECE) or winning_move(board, AI_PIECE) or len(get_valid_locations(board)) == 0
 
+# DONE Can win with more piece rather than 4
 def winning_move(board, piece):
     # checking horizontal 'windows' of 4 for win
-    for c in range(COLS-3):
+    for c in range(COLS - (WIN_NUM - 1)):
         for r in range(ROWS):
-            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-                return True
-
+            for i in range(WIN_NUM):
+                if board[r][c + i] != piece:
+                    return False
+                
+            return True
+            
     # checking vertical 'windows' of 4 for win
     for c in range(COLS):
-        for r in range(ROWS-3):
-            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+        for r in range(ROWS - (WIN_NUM - 1)):
+            for i in range(WIN_NUM):
+
+                if board[r + i][c] != piece:
+                        return False
+                    
                 return True
 
     # checking positively sloped diagonals for win
-    for c in range(COLS-3):
-        for r in range(3, ROWS):
-            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+    for c in range(COLS - (WIN_NUM - 1)):
+        for r in range((WIN_NUM - 1), ROWS):
+            for i in range(WIN_NUM):
+
+                if board[r - i][c + i] != piece:
+                        return False
+                    
                 return True
 
     # checking negatively sloped diagonals for win
-    for c in range(3,COLS):
-        for r in range(3, ROWS):
-            if board[r][c] == piece and board[r-1][c-1] == piece and board[r-2][c-2] == piece and board[r-3][c-3] == piece:
+    for c in range((WIN_NUM - 1), COLS):
+        for r in range((WIN_NUM - 1), ROWS):
+            for i in range(WIN_NUM):
+
+                if board[r - i][c - i] != piece:
+                        return False
                 return True
 
 def score_position(board, piece):
