@@ -1,35 +1,215 @@
 import random
 import numpy as np
 import math
-from connect4_with_AI import minimax
 
 print("ready")
-N,M,F,X,T = input("").strip().split(" ")
-N = int(N)
-M = int(M)
+
+ROWS,COLS,F,X,T = input("").strip().split(" ")
+ROWS = int(ROWS)
+COLS = int(COLS)
 F = int(F)
 T = float(T)
-count_list = [0] * M 
-board = np.zeros((N, M))
+count_list = [0] * COLS 
+board = np.zeros((ROWS, COLS))
 
+PLAYER_PIECE = 1
+AI_PIECE = 2
+
+
+# TODO Integrate Minimax from connect 4
+
+
+def minimax(board, depth, alpha, beta, maximizing_player):
+
+    valid_locations = get_valid_locations(board)
+
+    is_terminal = is_terminal_node(board)
+
+
+    if depth == 0 or is_terminal:
+        if is_terminal: 
+            if winning_move(board, AI_PIECE):
+                return (None, 10000000)
+            elif winning_move(board, PLAYER_PIECE):
+                return (None, -10000000)
+            else:
+                return (None, 0)
+        else: 
+            return (None, score_position(board, AI_PIECE))
+
+    if maximizing_player:
+
+        value = -math.inf
+
+        column = random.choice(valid_locations)
+
+
+        for col in valid_locations:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, AI_PIECE)
+            new_score = minimax(b_copy, depth - 1, alpha, beta, False)[1]
+
+            if new_score > value:
+                value = new_score
+                column = col
+
+            alpha = max(value, alpha) 
+
+            if alpha >= beta:
+                break
+
+        return column, value
+    
+    else: 
+        value = math.inf
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, PLAYER_PIECE)
+            new_score = minimax(b_copy, depth - 1, alpha, beta, True)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+            beta = min(value, beta) 
+            if alpha >= beta:
+                break
+        return column, value
+
+def get_valid_locations(board):
+    valid_locations = []
+
+    def is_valid_location(board, col):
+        return board[0][col] == 0
+
+    
+    for column in range(COLS):
+        if is_valid_location(board, column):
+            valid_locations.append(column)
+
+    return valid_locations
+
+def is_terminal_node(board):
+    return winning_move(board, PLAYER_PIECE) or winning_move(board, AI_PIECE) or len(get_valid_locations(board)) == 0
+
+def winning_move(board, piece):
+    # checking horizontal 'windows' of 4 for win
+    for c in range(COLS-3):
+        for r in range(ROWS):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                return True
+
+    # checking vertical 'windows' of 4 for win
+    for c in range(COLS):
+        for r in range(ROWS-3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+                return True
+
+    # checking positively sloped diagonals for win
+    for c in range(COLS-3):
+        for r in range(3, ROWS):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
+
+    # checking negatively sloped diagonals for win
+    for c in range(3,COLS):
+        for r in range(3, ROWS):
+            if board[r][c] == piece and board[r-1][c-1] == piece and board[r-2][c-2] == piece and board[r-3][c-3] == piece:
+                return True
+
+def score_position(board, piece):
+
+    def evaluate_window(window, piece):
+        # by default the oponent is the player
+        opponent_piece = PLAYER_PIECE
+
+        # if we are checking from the player's perspective, then the oponent is AI
+        if piece == PLAYER_PIECE:
+            opponent_piece = AI_PIECE
+
+        # initial score of a window is 0
+        score = 0
+
+        # based on how many friendly pieces there are in the window, we increase the score
+        if window.count(piece) == 4:
+            score += 100
+        elif window.count(piece) == 3 and window.count(0) == 1:
+            score += 5
+        elif window.count(piece) == 2 and window.count(0) == 2:
+            score += 2
+
+        # or decrese it if the oponent has 3 in a row
+        if window.count(opponent_piece) == 3 and window.count(0) == 1:
+            score -= 4 
+
+        return score    
+
+
+    score = 0
+
+    # score center column --> we are prioritizing the central column because it provides more potential winning windows
+    center_array = [int(i) for i in list(board[COLS//2])]
+    center_count = center_array.count(piece)
+    score += center_count * 6
+
+    # below we go over every single window in different directions and adding up their values to the score
+    # score horizontal
+    for r in range(ROWS):
+        row_array = [int(i) for i in list(board[r,:])]
+        for c in range(COLS - 3):
+            window = row_array[c:c + 4]
+            score += evaluate_window(window, piece)
+
+    # score vertical
+    for c in range(COLS):
+        col_array = [int(i) for i in list(board[:,c])]
+        for r in range(ROWS-3):
+            window = col_array[r:r+4]
+            score += evaluate_window(window, piece)
+
+    # score positively sloped diagonals
+    for r in range(3,ROWS):
+        for c in range(COLS - 3):
+            window = [board[r-i][c+i] for i in range(4)]
+            score += evaluate_window(window, piece)
+
+    # score negatively sloped diagonals
+    for r in range(3,ROWS):
+        for c in range(3,COLS):
+            window = [board[r-i][c-i] for i in range(4)]
+            score += evaluate_window(window, piece)
+
+    return score
+
+def get_next_open_row(board, col):
+    for r in range(ROWS-1, -1, -1):
+        if board[r][col] == 0:
+            return r
+
+def drop_piece(board, row, col, piece):
+    board[row][col] = piece
+
+
+
+# Testing Unit. DONE
 if F == 0:
     oppo_move = int(input(""))
-
-    board[N - 1 - count_list[oppo_move]][oppo_move] = 1
+    board[ROWS - 1 - count_list[oppo_move]][oppo_move] = PLAYER_PIECE
     count_list[oppo_move] +=1
 	
 
 while True:
     while True:
         my_move, minimax_score = minimax(board, 5, -math.inf, math.inf, True)
-        if count_list[my_move] != N:
-            board[N - 1 - count_list[my_move]][my_move] = 2
+        if count_list[my_move] != ROWS:
+            board[ROWS - 1 - count_list[my_move]][my_move] = AI_PIECE
             count_list[my_move] += 1
             print(my_move)
             break
 
     oppo_move = int(input(""))
-    board[N - 1 - count_list[oppo_move]][oppo_move] = 1
+    board[ROWS - 1 - count_list[oppo_move]][oppo_move] = PLAYER_PIECE
     count_list[oppo_move] +=1
 	
 
