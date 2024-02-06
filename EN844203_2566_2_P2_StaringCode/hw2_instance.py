@@ -2,6 +2,14 @@ import random
 import numpy as np
 import math
 
+
+"""
+Name: Matus Yaowvasrisuwan
+ID: 633040476 - 6
+
+Name: Nunnapat Srithong
+"""
+
 print("ready")
 
 ROWS,COLS,F,WIN_NUM,T = input("").strip().split(" ")
@@ -134,6 +142,7 @@ def winning_move(board, piece):
                         return False
                 return True
 
+# TODO Rework of score evaluation
 def score_position(board, piece):
 
     def evaluate_window(window, piece):
@@ -148,16 +157,17 @@ def score_position(board, piece):
         score = 0
 
         # based on how many friendly pieces there are in the window, we increase the score
-        if window.count(piece) == 4:
-            score += 100
-        elif window.count(piece) == 3 and window.count(0) == 1:
-            score += 5
-        elif window.count(piece) == 2 and window.count(0) == 2:
-            score += 2
+        if window.count(piece) == WIN_NUM:
+            score += math.fabs(window.count(piece))
 
-        # or decrese it if the oponent has 3 in a row
-        if window.count(opponent_piece) == 3 and window.count(0) == 1:
-            score -= 4 
+        else:
+            hueristic = (window.count(piece) - window.count(0)) + 2 # I want it to start from 1 and go for 2, 3, 5, 8 and so on.
+            score += math.fabs(hueristic)
+
+
+        # or decrese it if the oponent has X-1 in a row
+        if window.count(opponent_piece) == (WIN_NUM - 1) and window.count(0) == 1:
+            score -= math.fabs(window.count(opponent_piece)) 
 
         return score    
 
@@ -167,39 +177,39 @@ def score_position(board, piece):
     # score center column --> we are prioritizing the central column because it provides more potential winning windows
     center_array = [int(i) for i in list(board[COLS//2])]
     center_count = center_array.count(piece)
-    score += center_count * 6
+    score += (math.fabs(center_count))
 
     # below we go over every single window in different directions and adding up their values to the score
     # score horizontal
     for r in range(ROWS):
         row_array = [int(i) for i in list(board[r,:])]
-        for c in range(COLS - 3):
-            window = row_array[c:c + 4]
+        for c in range(COLS - (WIN_NUM - 1)):
+            window = row_array[c:c + WIN_NUM]
             score += evaluate_window(window, piece)
 
     # score vertical
     for c in range(COLS):
         col_array = [int(i) for i in list(board[:,c])]
-        for r in range(ROWS-3):
-            window = col_array[r:r+4]
+        for r in range(ROWS - (WIN_NUM - 1)):
+            window = col_array[r:r + WIN_NUM]
             score += evaluate_window(window, piece)
 
     # score positively sloped diagonals
-    for r in range(3,ROWS):
-        for c in range(COLS - 3):
-            window = [board[r-i][c+i] for i in range(4)]
+    for r in range((WIN_NUM - 1), ROWS):
+        for c in range(COLS - (WIN_NUM - 1)):
+            window = [board[r - i][c + i] for i in range(WIN_NUM)]
             score += evaluate_window(window, piece)
 
     # score negatively sloped diagonals
-    for r in range(3,ROWS):
-        for c in range(3,COLS):
-            window = [board[r-i][c-i] for i in range(4)]
+    for r in range((WIN_NUM - 1), ROWS):
+        for c in range((WIN_NUM - 1), COLS):
+            window = [board[r-i][c-i] for i in range(WIN_NUM)]
             score += evaluate_window(window, piece)
 
     return score
 
 def get_next_open_row(board, col):
-    for r in range(ROWS-1, -1, -1):
+    for r in range(ROWS - 1, -1, -1):
         if board[r][col] == 0:
             return r
 
