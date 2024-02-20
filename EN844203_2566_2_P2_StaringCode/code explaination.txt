@@ -1,0 +1,13 @@
+What is minimax?
+
+With connect X rule, 
+a)how do we know if we connect x horizontall? 
+b)how do we know if we connect x vertically?
+c)how do we know if we connect x diagonally?
+
+With connect X rule,
+how can our AI know this is better path to go?
+
+Provide a simple hueristic for previous answer.
+
+Note: Think simple, answer simple. If it is not clear enough answer, I will just ask you back

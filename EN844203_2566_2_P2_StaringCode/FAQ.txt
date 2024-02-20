@@ -4,3 +4,6 @@ A1. search for "ProgramA" and "ProgramB" command and maybe change it to "python3
 
 Q2. Unable to run on window 
 A2. Use judge.py at commit 2ac7af0 of this repo
+
+Q3: My program broke when I test it alone (Not using judge.py)
+A3: I find it to be broken using online source as the code I borrow should be break when it's won.

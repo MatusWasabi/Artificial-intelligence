@@ -1,0 +1,18 @@
+Name: Matus Yaowvasrisuwan
+ID: 633040476 - 6
+
+Name: Nunnapat Srithong
+ID: 633040218 - 8
+
+Our program use minimax function with alphabeta pruning with depth of 5 (Constant number).
+
+
+Hueristic used: Fabbonacci number
+Step 1. Check for vertically, horizontally, diagonally. When it checks, it will keep what it is checking as Window. (def score_position)
+Step 2. Then the window is used in Evaluate window to check the element inside it. (def evaluate_window)
+Step 3. The score is depended on Fabbonacci sequence of count of piece we are checking
+Step 4. The score will be deducted on Fabbanacci sequence of count of piece againt us.
+
+
+So Basically, the call stack of the minimax function will be.
+Minimax(n) -> Minimax(n - 1) -> ... -> Minimax(0) -> score_position -> evaluate window. 

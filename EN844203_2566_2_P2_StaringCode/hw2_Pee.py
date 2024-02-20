@@ -12,6 +12,8 @@ Student ID:
 import time
 import random
 import math
+import numpy as np
+
 
 WIN_SCORE = 100000000000000
 LOSE_SCORE = -10000000000000
@@ -143,7 +145,7 @@ T = float(T)
 count_list = [0] * M
 oppo_moves = [2, 3, 4, 3, 4, 1, 4, 2, 5, 2]
 
-board = [[0] * M for _ in range(N)]
+board = np.zeros((N, M))
 
 if F == 0:
     oppo_move = int(input(""))
@@ -154,18 +156,12 @@ while True:
     while True:
         my_move, minimax_score = minimax(board, 5, -math.inf, math.inf, True)
         if count_list[my_move] != N:
-            board[N - 1 - count_list[my_move]][my_move] = 2
-            count_list[my_move] += 1
-            print(my_move)
-            break
-        """if my_move is not None:
             row_drop = find_next_open_row(board, my_move)
             drop_piece(board, row_drop, my_move, 2)
             count_list[my_move] += 1
             print(my_move)
-            break"""
+            break
     oppo_move = int(input(""))
-    #oppo_move = oppo_moves.pop(0)
     row_drop = find_next_open_row(board, oppo_move)
     drop_piece(board, row_drop, oppo_move, 1) 
     count_list[oppo_move] += 1
