@@ -28,6 +28,7 @@ while num_wolves != 0 and num_villagers != 0:
     # Interrogation
     print("-----Interrogation Phase-----")
     for r in range(R):
+        # Hint is which player did each seat pointed to.
         hint = [0] * (N + M)
         for i in range(N + M):
             if seating[i] != "-":
@@ -36,6 +37,9 @@ while num_wolves != 0 and num_villagers != 0:
                     j = (j + 1) % (N + M)
                 hint[i] = j + 1
         print("Provided Hint: " + str(hint))
+        mygame.interrogation(hint)
+
+
     # Deduction
     print("-----Deduction Phase-----")
     suspect = mygame.deduction()
