@@ -48,6 +48,7 @@ while num_wolves != 0 and num_villagers != 0:
         print("Invalid answer.")
         print("The game stops.")
         exit()
+
     revealed = seating[suspect - 1]
     seating[suspect - 1] = "-"
     # Transition

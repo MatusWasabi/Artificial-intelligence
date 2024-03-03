@@ -6,4 +6,8 @@
 from random import sample 
   
 # Prints list of random items of given length 
-list1 = [[1, 2, 3], [4, 5]]  
+
+my_another_list = [1, 2, 1, 3]
+sample = my_another_list[0]
+sample = 3
+print(my_another_list)
