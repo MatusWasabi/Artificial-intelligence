@@ -24,7 +24,7 @@ random.shuffle(seating)
 print(seating)
 
 while num_wolves != 0 and num_villagers != 0:
-    # print(seating)
+    print(seating)
     # Interrogation
     print("-----Interrogation Phase-----")
     for r in range(R):
