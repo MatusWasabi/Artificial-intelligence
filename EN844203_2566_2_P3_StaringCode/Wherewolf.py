@@ -70,8 +70,8 @@ class Wherewolf:
                     __class__.weights[index] *= self.villager_quiet * 1 / self.num_villager
 
 
-            norm = [float(i)/sum(__class__.weights) for i in __class__.weights]
-            __class__.weights = norm
+        norm = [float(i)/sum(__class__.weights) for i in __class__.weights]
+        __class__.weights = norm
 
 
                 
