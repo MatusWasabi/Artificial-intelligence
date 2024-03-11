@@ -23,7 +23,7 @@ class Wherewolf:
         for i in range(Wherewolf.sampling_size):
             shuffled_copy = random.sample(self.seating.copy(), len(self.seating))
             self.particles.append(shuffled_copy)
-            __class__.weights[i] = 1    
+            __class__.weights[i] = 1
 
         self.num_wolf = num_wolf
         self.num_villager = num_villager
@@ -37,11 +37,12 @@ class Wherewolf:
         self.wolf_trade_role = wolf_trade_role
             
     def interrogation(self, hint: list[str]):
+
         for index in range(len(hint)):
             player_point_from = index
             player_point_to = hint[index] - 1
 
-            for number, sample in enumerate(self.particles):
+            for index, sample in enumerate(self.particles):
 
                 is_wolf_point_wolf = sample[player_point_from] == "W" and sample[player_point_to] == "W"
                 is_wolf_point_vill = sample[player_point_from] == "W" and sample[player_point_to] == "V"
@@ -51,22 +52,32 @@ class Wherewolf:
                 is_vill_quiet = sample[player_point_from] == "V" and player_point_to == 0
 
                 if is_wolf_point_wolf:
-                    __class__.weights[number] *= self.wolf_point_same / self.num_wolf
+                    __class__.weights[index] *= self.wolf_point_same * 1 / self.num_wolf
 
                 if is_wolf_point_vill:
-                    __class__.weights[number] *= self.wolf_point_opp / self.num_wolf
+                    __class__.weights[index] *= self.wolf_point_opp * 1 / self.num_wolf
                 
                 if is_wolf_quiet:
-                    __class__.weights[number] *= self.wolf_quiet  / self.num_wolf
+                    __class__.weights[index] *= self.wolf_quiet * 1 / self.num_wolf
 
                 if is_vill_point_vill:
-                    __class__.weights[number] *= self.villager_point_same / self.num_villager
+                    __class__.weights[index] *= self.villager_point_same * 1 / self.num_villager
 
                 if is_vill_point_vill:
-                    __class__.weights[number] *= self.villager_point_opp / self.num_villager
+                    __class__.weights[index] *= self.villager_point_opp * 1 / self.num_villager
 
                 if is_vill_quiet:
-                    __class__.weights[number] *= self.villager_quiet / self.num_villager
+                    __class__.weights[index] *= self.villager_quiet * 1 / self.num_villager
+
+
+            norm = [float(i)/sum(__class__.weights) for i in __class__.weights]
+            __class__.weights = norm
+
+
+                
+
+
+                
                     
     def deduction(self) -> int:
 
