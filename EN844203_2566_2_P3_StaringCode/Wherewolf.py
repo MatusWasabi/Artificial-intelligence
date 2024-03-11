@@ -17,7 +17,7 @@ class Wherewolf:
         self.seating = ["W"] * num_wolf + ["V"] * num_villager #Create instance seating
         self.particles = []
 
-        __class__.sampling_size = 5#num_villager * num_wolf
+        __class__.sampling_size = num_villager * num_wolf
         __class__.weights = [0] * __class__.sampling_size
 
         for i in range(Wherewolf.sampling_size):
