@@ -8,7 +8,7 @@ import random
 
 
 class Wherewolf:
-    sampling_size = 10
+    sampling_size = 100
     weights = [0] * sampling_size
 
     def __init__(self, num_wolf, num_villager, interrogation_rounds, wolf_point_opp, wolf_quiet, wolf_point_same, villager_point_opp, villager_quiet, villager_point_same, wolf_trade_role):
@@ -17,12 +17,14 @@ class Wherewolf:
         self.seating = ["W"] * num_wolf + ["V"] * num_villager #Create instance seating
         self.particles = []
 
+        __class__.sampling_size = num_villager * num_wolf
+        __class__.weights = [0] * __class__.sampling_size
+
         for i in range(Wherewolf.sampling_size):
             shuffled_copy = random.sample(self.seating.copy(), len(self.seating))
             self.particles.append(shuffled_copy)
             __class__.weights[i] = 1    
 
-        # May need to delete these out
         self.num_wolf = num_wolf
         self.num_villager = num_villager
         self.interrogation_rounds = interrogation_rounds
@@ -33,49 +35,44 @@ class Wherewolf:
         self.villager_quiet = villager_quiet
         self.villager_point_same = villager_point_same
         self.wolf_trade_role = wolf_trade_role
-        
-
             
-    
-    # DONE
     def interrogation(self, hint: list[str]):
         for index in range(len(hint)):
             player_point_from = index
             player_point_to = hint[index] - 1
 
             for number, sample in enumerate(self.particles):
-                # W Point Same team
-                if sample[player_point_from] == "W" and sample[player_point_to] == "W":
-                    __class__.weights[number] *= self.wolf_point_same * 1 / self.num_wolf
 
-                # W point opp
-                if sample[player_point_from] == "W" and sample[player_point_to] == "V":
-                    __class__.weights[number] *= self.wolf_point_opp * 1 / self.num_wolf
+                is_wolf_point_wolf = sample[player_point_from] == "W" and sample[player_point_to] == "W"
+                is_wolf_point_vill = sample[player_point_from] == "W" and sample[player_point_to] == "V"
+                is_wolf_quiet = sample[player_point_from] == "W" and player_point_to == 0
+                is_vill_point_vill = sample[player_point_from] == "V" and sample[player_point_to] == "V"
+                is_vill_point_vill = sample[player_point_from] == "V" and sample[player_point_to] == "W"
+                is_vill_quiet = sample[player_point_from] == "V" and player_point_to == 0
 
-                # W stay quiet
-                if sample[player_point_from] == "W" and player_point_to == 0:
-                    __class__.weights[number] *= self.wolf_quiet * 1 / self.num_wolf
+                if is_wolf_point_wolf:
+                    __class__.weights[number] *= self.wolf_point_same / self.num_wolf
 
-                # V Point Same team
-                if sample[player_point_from] == "V" and sample[player_point_to] == "V":
-                    __class__.weights[number] *= self.villager_point_same * 1 / self.num_villager
+                if is_wolf_point_vill:
+                    __class__.weights[number] *= self.wolf_point_opp / self.num_wolf
+                
+                if is_wolf_quiet:
+                    __class__.weights[number] *= self.wolf_quiet  / self.num_wolf
 
-                # V point opp
-                if sample[player_point_from] == "V" and sample[player_point_to] == "W":
-                    __class__.weights[number] *= self.villager_point_opp * 1 / self.num_villager
+                if is_vill_point_vill:
+                    __class__.weights[number] *= self.villager_point_same / self.num_villager
 
-                # V stay quiet
-                if sample[player_point_from] == "V" and player_point_to == 0:
-                    __class__.weights[number] *= self.villager_quiet * 1 / self.num_villager
+                if is_vill_point_vill:
+                    __class__.weights[number] *= self.villager_point_opp / self.num_villager
+
+                if is_vill_quiet:
+                    __class__.weights[number] *= self.villager_quiet / self.num_villager
                     
 
 
     def deduction(self) -> int:
 
-        # Random another set of particles based on weights they have, that will be what state they we will use as based on educated guess
-        # Choose from what is most seat likely to be the wolf 
         particles = random.choices(population = self.particles, weights = __class__.weights, k = __class__.sampling_size)
-
         wolf_chance = [0] * self.total
 
         for particle in particles:
@@ -88,33 +85,19 @@ class Wherewolf:
         seat_with_max_chance = wolf_chance.index(max_wolf_chance)
         self.current = seat_with_max_chance
 
-
-        self.kill_in_samples(self.current)
-
-        """
-        for each sample
-                for each position 
-                    keep track which position is most likely to be wolf
-                """
         self.current += 1
         return self.current
-    
-    def kill_in_samples(self, index_kill: int):
-        for particle in self.particles:
-            particle[index_kill] = "-"
-        pass
 
     def transition(self, revealed: str):
         for index, particle in enumerate(self.particles):
             if particle != revealed:
                 __class__.weights[index] = 0
+        self.kill_in_samples(self.current - 1)
 
-        #self.resample() # Do update the educated guess based on coming evidence
-        """for each sample:
-                if sample[???][position] != revealed:
-                        weight[????] = 0
-                        
-                resample()"""
+    def kill_in_samples(self, index_kill: int):
+        for particle in self.particles:
+            particle[index_kill] = "-"
+        pass
 
     def resample(self):
 
@@ -125,12 +108,6 @@ class Wherewolf:
             __class__.weights[index] = 1
         self.particles = particles
 
-        """
-        create array sample2:
-        for each sample in sample2:
-        x = random depend on weight
-        sample2[????] = sample[x]
-        weight[???] = 1  
-        """
-
         #Mutate and shit
+
+    
