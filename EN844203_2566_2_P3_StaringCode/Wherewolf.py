@@ -8,7 +8,7 @@ import random
 
 
 class Wherewolf:
-    sampling_size = 100
+    sampling_size = 0
     weights = [0] * sampling_size
 
     def __init__(self, num_wolf, num_villager, interrogation_rounds, wolf_point_opp, wolf_quiet, wolf_point_same, villager_point_opp, villager_quiet, villager_point_same, wolf_trade_role):
@@ -17,7 +17,7 @@ class Wherewolf:
         self.seating = ["W"] * num_wolf + ["V"] * num_villager #Create instance seating
         self.particles = []
 
-        __class__.sampling_size = num_villager * num_wolf
+        __class__.sampling_size = 5#num_villager * num_wolf
         __class__.weights = [0] * __class__.sampling_size
 
         for i in range(Wherewolf.sampling_size):
@@ -90,9 +90,12 @@ class Wherewolf:
 
     def transition(self, revealed: str):
         for index, particle in enumerate(self.particles):
-            if particle != revealed:
-                __class__.weights[index] = 0
+            if particle[self.current - 1] != revealed:
+                self.mutate(revealed, particle)
+                #__class__.weights[index] = 0
+
         self.kill_in_samples(self.current - 1)
+        self.resample()
 
     def kill_in_samples(self, index_kill: int):
         for particle in self.particles:
@@ -102,12 +105,33 @@ class Wherewolf:
     def resample(self):
 
         particles = self.particles.copy()
-        for index, particle in enumerate(particles):
-            random_particle = random.choices(particles, weights=__class__.weights)
-            particle = random_particle
+        for index in range(len(particles)):
+            random_particle = random.choices(particles, weights = __class__.weights)
+            particles[index] = random_particle[0]
             __class__.weights[index] = 1
+
         self.particles = particles
 
-        #Mutate and shit
+    def mutate(self, true_role: str, particle: list):
 
-    
+        # Find where the wolf and villager is in that particle 
+        wolf_seats = []
+        vill_seats = []
+        for i in range(len(particle)):
+            if particle[i] == "W":
+                wolf_seats.append(i)
+
+            if particle[i] == "V":
+                vill_seats.append(i)
+        
+        # If the particle is expected V but the truth is W
+        if true_role == "W":
+            random_wolf = random.choice(wolf_seats)
+            particle[self.current - 1], particle[random_wolf] = particle[random_wolf], particle[self.current - 1]
+
+        if true_role == "V":
+            random_vill = random.choice(vill_seats)
+            particle[self.current - 1], particle[random_vill] = particle[random_vill], particle[self.current - 1]
+
+        
+
