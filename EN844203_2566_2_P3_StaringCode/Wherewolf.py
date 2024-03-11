@@ -68,8 +68,6 @@ class Wherewolf:
                 if is_vill_quiet:
                     __class__.weights[number] *= self.villager_quiet / self.num_villager
                     
-
-
     def deduction(self) -> int:
 
         particles = random.choices(population = self.particles, weights = __class__.weights, k = __class__.sampling_size)
@@ -92,7 +90,7 @@ class Wherewolf:
         for index, particle in enumerate(self.particles):
             if particle[self.current - 1] != revealed:
                 self.mutate(revealed, particle)
-                #__class__.weights[index] = 0
+                __class__.weights[index] = 0
 
         self.kill_in_samples(self.current - 1)
         self.resample()
@@ -114,7 +112,6 @@ class Wherewolf:
 
     def mutate(self, true_role: str, particle: list):
 
-        # Find where the wolf and villager is in that particle 
         wolf_seats = []
         vill_seats = []
         for i in range(len(particle)):
@@ -124,7 +121,6 @@ class Wherewolf:
             if particle[i] == "V":
                 vill_seats.append(i)
         
-        # If the particle is expected V but the truth is W
         if true_role == "W":
             random_wolf = random.choice(wolf_seats)
             particle[self.current - 1], particle[random_wolf] = particle[random_wolf], particle[self.current - 1]
