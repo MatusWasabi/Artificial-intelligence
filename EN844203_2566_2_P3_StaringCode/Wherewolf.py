@@ -8,22 +8,20 @@ import random
 
 
 class Wherewolf:
-    sampling_size = 0
-    weights = [0] * sampling_size
 
     def __init__(self, num_wolf, num_villager, interrogation_rounds, wolf_point_opp, wolf_quiet, wolf_point_same, villager_point_opp, villager_quiet, villager_point_same, wolf_trade_role):
         self.total = num_wolf + num_villager
         self.current = 0
-        self.seating = ["W"] * num_wolf + ["V"] * num_villager #Create instance seating
+        self.seating = ["W"] * num_wolf + ["V"] * num_villager 
         self.particles = []
 
-        __class__.sampling_size = num_villager * num_wolf
-        __class__.weights = [0] * __class__.sampling_size
+        self.sampling_size = num_villager * num_wolf
+        self.weights = [0] * self.sampling_size
 
-        for i in range(Wherewolf.sampling_size):
+        for i in range(self.sampling_size):
             shuffled_copy = random.sample(self.seating.copy(), len(self.seating))
             self.particles.append(shuffled_copy)
-            __class__.weights[i] = 1
+            self.weights[i] = 1
 
         self.num_wolf = num_wolf
         self.num_villager = num_villager
@@ -44,44 +42,46 @@ class Wherewolf:
 
             for index, sample in enumerate(self.particles):
 
+                
+                
+                
                 is_wolf_point_wolf = sample[player_point_from] == "W" and sample[player_point_to] == "W"
-                is_wolf_point_vill = sample[player_point_from] == "W" and sample[player_point_to] == "V"
-                is_wolf_quiet = sample[player_point_from] == "W" and player_point_to == 0
-                is_vill_point_vill = sample[player_point_from] == "V" and sample[player_point_to] == "V"
-                is_vill_point_vill = sample[player_point_from] == "V" and sample[player_point_to] == "W"
-                is_vill_quiet = sample[player_point_from] == "V" and player_point_to == 0
-
                 if is_wolf_point_wolf:
-                    __class__.weights[index] *= self.wolf_point_same * 1 / self.num_wolf
+                    self.weights[index] *= self.wolf_point_same * 1 / self.num_wolf
 
+                is_wolf_point_vill = sample[player_point_from] == "W" and sample[player_point_to] == "V"
                 if is_wolf_point_vill:
-                    __class__.weights[index] *= self.wolf_point_opp * 1 / self.num_wolf
-                
+                    self.weights[index] *= self.wolf_point_opp * 1 / self.num_wolf
+
+                is_wolf_quiet = sample[player_point_from] == "W" and player_point_to == 0
                 if is_wolf_quiet:
-                    __class__.weights[index] *= self.wolf_quiet * 1 / self.num_wolf
+                    self.weights[index] *= self.wolf_quiet * 1 / self.num_wolf
 
+                is_vill_point_vill = sample[player_point_from] == "V" and sample[player_point_to] == "V"
                 if is_vill_point_vill:
-                    __class__.weights[index] *= self.villager_point_same * 1 / self.num_villager
+                    self.weights[index] *= self.villager_point_same * 1 / self.num_villager
 
-                if is_vill_point_vill:
-                    __class__.weights[index] *= self.villager_point_opp * 1 / self.num_villager
+                is_vill_point_wolf = sample[player_point_from] == "V" and sample[player_point_to] == "W"
+                if is_vill_point_wolf:
+                    self.weights[index] *= self.villager_point_opp * 1 / self.num_villager
 
+                is_vill_quiet = sample[player_point_from] == "V" and player_point_to == 0
                 if is_vill_quiet:
-                    __class__.weights[index] *= self.villager_quiet * 1 / self.num_villager
+                    self.weights[index] *= self.villager_quiet * 1 / self.num_villager
 
 
-        norm = [float(i)/sum(__class__.weights) for i in __class__.weights]
-        __class__.weights = norm
+        norm = self.normalize_against_sum(self.weights)
+        self.weights = norm
 
+        
 
-                
+    def normalize_against_sum(self, weights: list[int]) -> float:
+        return [float(i)/sum(weights) for i in weights]
 
-
-                
-                    
+                                    
     def deduction(self) -> int:
 
-        particles = random.choices(population = self.particles, weights = __class__.weights, k = __class__.sampling_size)
+        particles = random.choices(population = self.particles, weights = self.weights, k = self.sampling_size)
         wolf_chance = [0] * self.total
 
         for particle in particles:
@@ -101,7 +101,7 @@ class Wherewolf:
         for index, particle in enumerate(self.particles):
             if particle[self.current - 1] != revealed:
                 self.mutate(revealed, particle)
-                __class__.weights[index] = 0
+                self.weights[index] = 0
 
         self.kill_in_samples(self.current - 1)
         self.resample()
@@ -115,9 +115,9 @@ class Wherewolf:
 
         particles = self.particles.copy()
         for index in range(len(particles)):
-            random_particle = random.choices(particles, weights = __class__.weights)
+            random_particle = random.choices(particles, weights = self.weights)
             particles[index] = random_particle[0]
-            __class__.weights[index] = 1
+            self.weights[index] = 1
 
         self.particles = particles
 
